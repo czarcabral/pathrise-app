@@ -1,6 +1,7 @@
 package cabral.pathriseapp.controller;
 
 import cabral.pathriseapp.model.Job;
+import cabral.pathriseapp.model.JobBoard;
 import cabral.pathriseapp.service.MainService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,8 +19,16 @@ public class MainController {
     @Autowired
     private MainService mainService;
 
+    @GetMapping("api/jobBoards")
+    public ResponseEntity<?> getAllJobBoards() {
+        Map<String, Object> map = new HashMap<>();
+        List<JobBoard> jobBoards = mainService.getAllJobBoards();
+        map.put("data", jobBoards);
+        return new ResponseEntity<>(map, HttpStatus.OK);
+    }
+
     @GetMapping("api/jobs")
-    public ResponseEntity<?> getJobs() {
+    public ResponseEntity<?> getAllJobs() {
         Map<String, Object> map = new HashMap<>();
         List<Job> jobs = mainService.getAllJobs();
         map.put("data", jobs);

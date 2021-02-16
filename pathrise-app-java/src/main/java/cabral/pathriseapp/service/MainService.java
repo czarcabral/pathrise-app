@@ -18,6 +18,10 @@ public class MainService {
     @Autowired
     private JobRepository jobRepository;
 
+    public List<JobBoard> getAllJobBoards() {
+        return jobBoardRepository.findAll();
+    }
+
     public void saveJobBoards(List<JobBoard> jobBoards) {
         jobBoardRepository.saveAll(jobBoards);
     }
