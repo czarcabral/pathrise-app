@@ -82,7 +82,10 @@ public class MainCommandLineRunner implements CommandLineRunner {
 
             // read each record and convert to Job
             String[] line = null;
-            while ((line = csvReader.readNext()) != null) {
+//            while ((line = csvReader.readNext()) != null) {   // temp
+            for (int i = 0; i < 2000; i++) {                    // temp
+                line = csvReader.readNext();                    // temp
+
                 Job job = new Job();
 
                 // id
@@ -115,7 +118,7 @@ public class MainCommandLineRunner implements CommandLineRunner {
                 jobs.add(job);
             }
 
-//            mainService.saveJobs(jobs);
+            mainService.saveJobs(jobs);
 
             logger.info("Done reading job_opportunities.csv and creating Jobs");
         } catch (Exception e) {
