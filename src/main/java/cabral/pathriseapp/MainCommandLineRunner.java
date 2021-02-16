@@ -135,6 +135,16 @@ public class MainCommandLineRunner implements CommandLineRunner {
 
                 // check if valid URI host
                 if (host != null) {
+                    // extract the domain from the URL and check it is a known job board domain
+                    String[] hostArr = host.split("\\.");
+                    if (hostArr.length > 1) {
+                        String domain = hostArr[hostArr.length - 2] + "." + hostArr[hostArr.length - 1];
+                        if (jobBoardsMap.containsKey(domain.toLowerCase())) {
+                            JobBoard jobBoard = jobBoardsMap.get(domain.toLowerCase());
+                            return jobBoard.getName();
+                        }
+                    }
+
                     // check if company on host is same as companyName from csv record
                     // split company names into tokens and if any part of the company name appears in host, return company name
                     // e.g. Veson Nautical https://careers-veson.icims.com
@@ -147,16 +157,6 @@ public class MainCommandLineRunner implements CommandLineRunner {
 
                     // also try to see if company name can be converted to acronym
                     // UPDATE: this will produce false positives because the acronym may be part of random substring in domain
-
-                    // extract the domain from the URL and check it is a known job board domain
-                    String[] hostArr = host.split("\\.");
-                    if (hostArr.length > 1) {
-                        String domain = hostArr[hostArr.length - 2] + "." + hostArr[hostArr.length - 1];
-                        if (jobBoardsMap.containsKey(domain.toLowerCase())) {
-                            JobBoard jobBoard = jobBoardsMap.get(domain.toLowerCase());
-                            return jobBoard.getName();
-                        }
-                    }
                 }
             } catch (URISyntaxException e) {
 //                e.printStackTrace();
