@@ -1,19 +1,55 @@
 package cabral.pathriseapp;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.hibernate.annotations.DynamicInsert;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "job_board")
+@DynamicInsert
 public class JobBoard {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
     private String name;
+
     private String rating;
+
+    @Column
+    @JsonProperty("root_domain")
     private String rootDomain;
+
+    @Column
+    @JsonProperty("logo_file")
     private String logoFile;
+
     private String description;
 
-    public JobBoard(String name, String rating, String rootDomain, String logoFile, String description) {
+    public JobBoard() { }
+
+    public JobBoard(Integer id, String name, String rating, String rootDomain, String logoFile, String description) {
+        this.id = id;
         this.name = name;
         this.rating = rating;
         this.rootDomain = rootDomain;
         this.logoFile = logoFile;
         this.description = description;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getName() {

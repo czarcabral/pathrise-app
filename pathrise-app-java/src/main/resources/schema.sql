@@ -6,3 +6,12 @@ create table `job` (
     `job_url` varchar(10000),
     `job_source` varchar(255)
 );
+drop table if exists `job_board`;
+create table `job_board` (
+	`id` int auto_increment primary key,
+    `name` varchar(255),
+    `rating` varchar(255),
+    `root_domain` varchar(255),
+    `logo_file` varchar(1000),
+    `description` varchar(2000)
+);

@@ -9,7 +9,14 @@ import java.util.List;
 public class MainService {
 
     @Autowired
+    private JobBoardRepository jobBoardRepository;
+
+    @Autowired
     private JobRepository jobRepository;
+
+    public void saveJobBoards(List<JobBoard> jobBoards) {
+        jobBoardRepository.saveAll(jobBoards);
+    }
 
     public List<Job> getAllJobs() {
         return jobRepository.findAll();
