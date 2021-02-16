@@ -136,7 +136,7 @@ public class MainCommandLineRunner implements CommandLineRunner {
                     String[] companyNameTokens = companyName.split("((?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z]))|[^a-zA-Z]");
                     for (String companyNameToken : companyNameTokens) {
                         if (host.contains(companyNameToken.toLowerCase().replaceAll("[^a-zA-Z0-9]", ""))) {
-                            return companyName;
+                            return "Company Website";
                         }
                     }
 
