@@ -30,6 +30,10 @@ public class MainService {
         return jobRepository.findAll();
     }
 
+    public List<Job> getJobsByJobSource(String jobSource) {
+        return jobRepository.myCustomQuery(jobSource);
+    }
+
     public void saveJob(Job job) {
         jobRepository.save(job);
     }

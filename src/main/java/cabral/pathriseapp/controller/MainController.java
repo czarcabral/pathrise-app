@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -35,6 +36,14 @@ public class MainController {
     public ResponseEntity<?> getAllJobs() {
         Map<String, Object> map = new HashMap<>();
         List<Job> jobs = mainService.getAllJobs();
+        map.put("data", jobs);
+        return new ResponseEntity<>(map, HttpStatus.OK);
+    }
+
+    @GetMapping("/job/{jobSource}")
+    public ResponseEntity<?> getJobsByJobSource(@PathVariable("jobSource") String jobSource) {
+        Map<String, Object> map = new HashMap<>();
+        List<Job> jobs = mainService.getJobsByJobSource(jobSource);
         map.put("data", jobs);
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
