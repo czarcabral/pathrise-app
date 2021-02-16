@@ -10,6 +10,8 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.io.ClassPathResource;
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.InputStreamReader;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,10 +31,10 @@ public class MainCommandLineRunner implements CommandLineRunner {
     @Autowired
     private MainService mainService;
 
+    private Logger logger = LoggerFactory.getLogger(MainCommandLineRunner.class);
+
     @Override
     public void run(String... args) throws Exception {
-        System.out.println("TEMP IS RUNNING");
-
         // read and save jobBoards.json and job_opportunities.csv
         initializeJobs();
     }
@@ -48,6 +51,8 @@ public class MainCommandLineRunner implements CommandLineRunner {
                 .build();
         Map<String, List<JobBoard>> outerMap = null;
         try {
+            logger.info("Begin reading jobBoards.json and creating JobBoards");
+
             // convert json object to map
             outerMap = mapper.readValue(jobBoardsJson.getInputStream(), new TypeReference<>() {});
             List<JobBoard> jobBoards = outerMap.get("job_boards");
@@ -58,6 +63,8 @@ public class MainCommandLineRunner implements CommandLineRunner {
             for (JobBoard jobBoard : jobBoards) {
                 jobBoardsMap.put(jobBoard.getRootDomain().toLowerCase(), jobBoard);
             }
+
+            logger.info("Done reading jobBoards.json and creating JobBoards");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -68,6 +75,8 @@ public class MainCommandLineRunner implements CommandLineRunner {
                 .withSkipLines(1)
                 .build()
         ) {
+            logger.info("Begin reading job_opportunities.csv and creating Jobs");
+
             // read each record and convert to Job
             String[] line = null;
             while ((line = csvReader.readNext()) != null) {
@@ -102,7 +111,8 @@ public class MainCommandLineRunner implements CommandLineRunner {
 
                 mainService.saveJob(job);
             }
-            System.out.println("Done adding job records");
+
+            logger.info("Done reading job_opportunities.csv and creating Jobs");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -118,28 +128,33 @@ public class MainCommandLineRunner implements CommandLineRunner {
                 URI uri = new URI(jobUrl);
                 String host = uri.getHost();
 
-                // check if company on host is same as companyName from csv record
-                // split company names into tokens and if any part of the company name appears in host, return company name
-                // e.g. Veson Nautical https://careers-veson.icims.com
-                String[] companyNameTokens = companyName.split("((?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z]))|[^a-zA-Z]");
-                for (String companyNameToken : companyNameTokens) {
-                    if (host.contains(companyNameToken.toLowerCase().replaceAll("[^a-zA-Z0-9]", ""))) {
-                        return companyName;
+                // check if valid URI host
+                if (host != null) {
+                    // check if company on host is same as companyName from csv record
+                    // split company names into tokens and if any part of the company name appears in host, return company name
+                    // e.g. Veson Nautical https://careers-veson.icims.com
+                    String[] companyNameTokens = companyName.split("((?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z]))|[^a-zA-Z]");
+                    for (String companyNameToken : companyNameTokens) {
+                        if (host.contains(companyNameToken.toLowerCase().replaceAll("[^a-zA-Z0-9]", ""))) {
+                            return companyName;
+                        }
+                    }
+
+                    // also try to see if company name can be converted to acronym
+                    // UPDATE: this will produce false positives because the acronym may be part of random substring in domain
+
+                    // extract the domain from the URL and check it is a known job board domain
+                    String[] hostArr = host.split("\\.");
+                    if (hostArr.length > 1) {
+                        String domain = hostArr[hostArr.length - 2] + "." + hostArr[hostArr.length - 1];
+                        if (jobBoardsMap.containsKey(domain.toLowerCase())) {
+                            JobBoard jobBoard = jobBoardsMap.get(domain.toLowerCase());
+                            return jobBoard.getName();
+                        }
                     }
                 }
-
-                // also try to see if company name can be converted to acronym
-                // UPDATE: this will produce false positives because the acronym may be part of random substring in domain
-
-                // extract the domain from the URL and check it is a known job board domain
-                String[] hostArr = host.split("\\.");
-                if (hostArr.length > 1) {
-                    String domain = hostArr[hostArr.length - 2] + "." + hostArr[hostArr.length - 1];
-                    if (jobBoardsMap.containsKey(domain.toLowerCase())) {
-                        JobBoard jobBoard = jobBoardsMap.get(domain.toLowerCase());
-                        return jobBoard.getName();
-                    }
-                }
+            } catch (URISyntaxException e) {
+//                e.printStackTrace();
             } catch (Exception e) {
                 e.printStackTrace();
             }
