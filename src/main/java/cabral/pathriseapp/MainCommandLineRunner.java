@@ -115,7 +115,7 @@ public class MainCommandLineRunner implements CommandLineRunner {
                 jobs.add(job);
             }
 
-            mainService.saveJobs(jobs);
+//            mainService.saveJobs(jobs);
 
             logger.info("Done reading job_opportunities.csv and creating Jobs");
         } catch (Exception e) {
