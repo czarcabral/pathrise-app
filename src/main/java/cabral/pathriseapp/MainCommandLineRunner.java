@@ -58,7 +58,7 @@ public class MainCommandLineRunner implements CommandLineRunner {
             outerMap = mapper.readValue(jobBoardsJson.getInputStream(), new TypeReference<>() {});
             List<JobBoard> jobBoards = outerMap.get("job_boards");
 
-//            mainService.saveJobBoards(jobBoards);
+            mainService.saveJobBoards(jobBoards);
 
             // shortcut : make key value pairs of root domains and job board object
             for (JobBoard jobBoard : jobBoards) {
@@ -115,7 +115,7 @@ public class MainCommandLineRunner implements CommandLineRunner {
                 jobs.add(job);
             }
 
-//            mainService.saveJobs(jobs);
+            mainService.saveJobs(jobs);
 
             logger.info("Done reading job_opportunities.csv and creating Jobs");
         } catch (Exception e) {
