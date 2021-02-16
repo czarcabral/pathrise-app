@@ -1,5 +1,8 @@
 package cabral.pathriseapp;
 
+import cabral.pathriseapp.model.Job;
+import cabral.pathriseapp.model.JobBoard;
+import cabral.pathriseapp.service.MainService;
 import com.fasterxml.jackson.core.json.JsonReadFeature;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;

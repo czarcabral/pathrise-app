@@ -1,4 +1,4 @@
-package cabral.pathriseapp;
+package cabral.pathriseapp.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.DynamicInsert;

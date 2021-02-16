@@ -1,4 +1,4 @@
-package cabral.pathriseapp;
+package cabral.pathriseapp.model;
 
 import org.hibernate.annotations.DynamicInsert;
 

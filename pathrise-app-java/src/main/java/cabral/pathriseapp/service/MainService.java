@@ -1,5 +1,9 @@
-package cabral.pathriseapp;
+package cabral.pathriseapp.service;
 
+import cabral.pathriseapp.model.Job;
+import cabral.pathriseapp.model.JobBoard;
+import cabral.pathriseapp.repository.JobBoardRepository;
+import cabral.pathriseapp.repository.JobRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
