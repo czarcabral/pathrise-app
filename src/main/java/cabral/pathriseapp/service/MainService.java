@@ -33,4 +33,8 @@ public class MainService {
     public void saveJob(Job job) {
         jobRepository.save(job);
     }
+
+    public void saveJobs(List<Job> jobs) {
+        jobRepository.saveAll(jobs);
+    }
 }

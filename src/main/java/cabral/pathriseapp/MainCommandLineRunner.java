@@ -21,6 +21,7 @@ import org.springframework.stereotype.Component;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -77,6 +78,8 @@ public class MainCommandLineRunner implements CommandLineRunner {
         ) {
             logger.info("Begin reading job_opportunities.csv and creating Jobs");
 
+            List<Job> jobs = new ArrayList<>();
+
             // read each record and convert to Job
             String[] line = null;
             while ((line = csvReader.readNext()) != null) {
@@ -109,8 +112,10 @@ public class MainCommandLineRunner implements CommandLineRunner {
                 // jobSource
                 job.setJobSource(determineJobSource(job.getJobUrl(), job.getCompanyName(), jobBoardsMap, mapper));
 
-                mainService.saveJob(job);
+                jobs.add(job);
             }
+
+            mainService.saveJobs(jobs);
 
             logger.info("Done reading job_opportunities.csv and creating Jobs");
         } catch (Exception e) {
