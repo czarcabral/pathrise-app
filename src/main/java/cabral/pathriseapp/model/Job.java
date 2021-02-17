@@ -2,9 +2,11 @@ package cabral.pathriseapp.model;
 
 import org.hibernate.annotations.DynamicInsert;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity
@@ -13,19 +15,16 @@ import javax.persistence.Table;
 public class Job {
 
     @Id
-    @Column
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "job_board_generator")
+    @SequenceGenerator(name = "job_board_generator", sequenceName = "job_board_id_seq")
     Integer id;
 
-    @Column
     String jobTitle;
 
-    @Column
     String companyName;
 
-    @Column
     String jobUrl;
 
-    @Column
     String jobSource;
 
     public Job() { }

@@ -2,11 +2,11 @@ package cabral.pathriseapp.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity
@@ -14,18 +14,17 @@ import javax.persistence.Table;
 public class JobBoard {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "job_generator")
+    @SequenceGenerator(name = "job_generator", sequenceName = "job_id_seq")
     private Integer id;
 
     private String name;
 
     private String rating;
 
-    @Column
     @JsonProperty("root_domain")
     private String rootDomain;
 
-    @Column
     @JsonProperty("logo_file")
     private String logoFile;
 
