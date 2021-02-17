@@ -1,7 +1,6 @@
 package cabral.pathriseapp.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,12 +11,10 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "job_board")
-@DynamicInsert
 public class JobBoard {
 
     @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     private String name;

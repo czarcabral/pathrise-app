@@ -13,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -28,6 +29,9 @@ import java.util.Map;
 
 @Component
 public class MainCommandLineRunner implements CommandLineRunner {
+
+    @Value("${spring.jpa.properties.hibernate.jdbc.batch_size}")
+    private int BATCH_SIZE;
 
     @Autowired
     private MainService mainService;
@@ -83,7 +87,7 @@ public class MainCommandLineRunner implements CommandLineRunner {
             // read each record and convert to Job
             String[] line = null;
 //            while ((line = csvReader.readNext()) != null) {   // temp
-            for (int i = 0; i < 2000; i++) {                    // temp
+            for (int i = 0; i < 50; i++) {                    // temp
                 line = csvReader.readNext();                    // temp
 
                 Job job = new Job();
@@ -116,9 +120,16 @@ public class MainCommandLineRunner implements CommandLineRunner {
                 job.setJobSource(determineJobSource(job.getJobUrl(), job.getCompanyName(), jobBoardsMap, mapper));
 
                 jobs.add(job);
-            }
 
-            mainService.saveJobs(jobs);
+                if (!jobs.isEmpty() && jobs.size() % BATCH_SIZE == 0) {
+                    mainService.saveJobs(jobs);
+                    jobs.clear();
+                }
+            }
+            if (!jobs.isEmpty()) {
+                mainService.saveJobs(jobs);
+                jobs.clear();
+            }
 
             logger.info("Done reading job_opportunities.csv and creating Jobs");
         } catch (Exception e) {
