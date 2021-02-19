@@ -52,6 +52,9 @@ public class MainCommandLineRunner implements CommandLineRunner {
         // use to compare companyName to jobBoards domain
         Map<String, JobBoard> jobBoardsMap = new HashMap<>();
 
+        // use to keep track of amount of Jobs per Job Source
+        Map<String, Integer> jobSourceCountMap = new HashMap<>();
+
         // extract JobBoards from jobBoards.json
         Resource jobBoardsJson = new ClassPathResource("jobBoards.json");
         ObjectMapper mapper = JsonMapper.builder()
@@ -136,6 +139,9 @@ public class MainCommandLineRunner implements CommandLineRunner {
                 }
 
                 outputData.add(new String[] {line[0], line[1], line[2], line[3], job.getJobSource() });
+
+                int currentCount = jobSourceCountMap.getOrDefault(job.getJobSource(), 0);
+                jobSourceCountMap.put(job.getJobSource(), currentCount + 1);
             }
             if (!jobs.isEmpty()) {
                 mainService.saveJobs(jobs);
@@ -144,6 +150,9 @@ public class MainCommandLineRunner implements CommandLineRunner {
 
             // write all the resolved jobs
             writer.writeAll(outputData);
+
+            // create json file to keep track of count of jobs by job source
+            mapper.writeValue(new File("job_source_count.json"), jobSourceCountMap);
 
             logger.info("Done reading job_opportunities.csv and creating Jobs");
         } catch (Exception e) {
