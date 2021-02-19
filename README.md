@@ -31,6 +31,9 @@ extremely simple on Heroku.
 - PostgreSQL: Initially attempting to use MySQL for it's simplicity, I 
 migrated to PostgreSQL for its ability to do batch inserts. Especially due to 
 having to insert 20,000 records from the job_opportunities.csv file.  
+- OpenCsv: a very helpful library for parsing through each record in a csv 
+file. I used this to automatically handle multiline records that were 
+surrounded in quotes.
 
 ### How it works:
 1. First, every time the server starts, it immediately parses the saved 
