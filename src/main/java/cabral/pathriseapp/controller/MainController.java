@@ -32,13 +32,13 @@ public class MainController {
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
 
-    @GetMapping("/jobs")
-    public ResponseEntity<?> getAllJobs() {
-        Map<String, Object> map = new HashMap<>();
-        List<Job> jobs = mainService.getAllJobs();
-        map.put("data", jobs);
-        return new ResponseEntity<>(map, HttpStatus.OK);
-    }
+//    @GetMapping("/jobs")
+//    public ResponseEntity<?> getAllJobs() {
+//        Map<String, Object> map = new HashMap<>();
+//        List<Job> jobs = mainService.getAllJobs();
+//        map.put("data", jobs);
+//        return new ResponseEntity<>(map, HttpStatus.OK);
+//    }
 
     @GetMapping("/jobs/{jobSource}")
     public ResponseEntity<?> getJobsByJobSource(@PathVariable("jobSource") String jobSource) {

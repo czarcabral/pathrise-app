@@ -8,7 +8,8 @@ create table job (
 );
 drop table if exists job_board;
 create table job_board (
-	id SERIAL primary key,
+-- 	id SERIAL primary key,
+	id integer primary key,
     name varchar(255),
     rating varchar(255),
     root_domain varchar(255),
