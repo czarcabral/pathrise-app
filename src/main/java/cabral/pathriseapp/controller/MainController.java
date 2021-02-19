@@ -40,8 +40,9 @@ public class MainController {
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
 
-    @GetMapping("/job/{jobSource}")
+    @GetMapping("/jobs/{jobSource}")
     public ResponseEntity<?> getJobsByJobSource(@PathVariable("jobSource") String jobSource) {
+        System.out.println(jobSource);
         Map<String, Object> map = new HashMap<>();
         List<Job> jobs = mainService.getJobsByJobSource(jobSource);
         map.put("data", jobs);
