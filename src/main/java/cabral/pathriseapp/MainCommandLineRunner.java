@@ -73,6 +73,7 @@ public class MainCommandLineRunner implements CommandLineRunner {
             // shortcut : make key value pairs of root domains and job board object
             for (JobBoard jobBoard : jobBoards) {
                 jobBoardsMap.put(jobBoard.getRootDomain().toLowerCase(), jobBoard);
+                jobSourceCountMap.put(jobBoard.getName(), 0);
             }
 
             logger.info("Done reading jobBoards.json and creating JobBoards");
