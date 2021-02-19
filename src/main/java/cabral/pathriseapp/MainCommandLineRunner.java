@@ -49,23 +49,29 @@ public class MainCommandLineRunner implements CommandLineRunner {
 
     // create jobs and jobboards
     private void initializeJobs() {
+        ObjectMapper mapper = JsonMapper.builder()
+                .enable(JsonReadFeature.ALLOW_TRAILING_COMMA)
+                .build();
+
         // use to compare companyName to jobBoards domain
         Map<String, JobBoard> jobBoardsMap = new HashMap<>();
 
         // use to keep track of amount of Jobs per Job Source
         Map<String, Integer> jobSourceCountMap = new HashMap<>();
 
+        readJobBoardJson(mapper, jobBoardsMap, jobSourceCountMap);
+
+        readJobOpportunitiesCsv(mapper, jobBoardsMap, jobSourceCountMap);
+    }
+
+    private void readJobBoardJson(ObjectMapper mapper, Map<String, JobBoard> jobBoardsMap, Map<String, Integer> jobSourceCountMap) {
         // extract JobBoards from jobBoards.json
         Resource jobBoardsJson = new ClassPathResource("jobBoards.json");
-        ObjectMapper mapper = JsonMapper.builder()
-                .enable(JsonReadFeature.ALLOW_TRAILING_COMMA)
-                .build();
-        Map<String, List<JobBoard>> outerMap = null;
         try {
             logger.info("Begin reading jobBoards.json and creating JobBoards");
 
             // convert json object to map
-            outerMap = mapper.readValue(jobBoardsJson.getInputStream(), new TypeReference<>() {});
+            Map<String, List<JobBoard>> outerMap = mapper.readValue(jobBoardsJson.getInputStream(), new TypeReference<>() {});
             List<JobBoard> jobBoards = outerMap.get("job_boards");
 
             mainService.saveJobBoards(jobBoards);
@@ -80,8 +86,9 @@ public class MainCommandLineRunner implements CommandLineRunner {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
 
-        // extract Jobs from job_opportunities.csv
+    private void readJobOpportunitiesCsv(ObjectMapper mapper, Map<String, JobBoard> jobBoardsMap, Map<String, Integer> jobSourceCountMap) {
         Resource jobOpportunitiesCsv = new ClassPathResource("job_opportunities.csv");
         File jobOpportunitiesResolvedCsv = new File("job_opportunities_resolved.csv");
         try (CSVReader csvReader = new CSVReaderBuilder(new InputStreamReader(jobOpportunitiesCsv.getInputStream()))
@@ -99,9 +106,9 @@ public class MainCommandLineRunner implements CommandLineRunner {
 
             // read each record and convert to Job
             String[] line = null;
-            while ((line = csvReader.readNext()) != null) {   // temp
-//            for (int i = 0; i < 100; i++) {                    // temp
-//                line = csvReader.readNext();                    // temp
+            while ((line = csvReader.readNext()) != null) {
+//            for (int i = 0; i < 100; i++) {
+//                line = csvReader.readNext();
 
                 Job job = new Job();
 
