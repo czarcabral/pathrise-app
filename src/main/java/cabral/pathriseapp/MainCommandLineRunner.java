@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
+import com.opencsv.CSVWriter;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +20,8 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -76,11 +79,17 @@ public class MainCommandLineRunner implements CommandLineRunner {
 
         // extract Jobs from job_opportunities.csv
         Resource jobOpportunitiesCsv = new ClassPathResource("job_opportunities.csv");
+        File jobOpportunitiesResolvedCsv = new File("job_opportunities_resolved.csv");
         try (CSVReader csvReader = new CSVReaderBuilder(new InputStreamReader(jobOpportunitiesCsv.getInputStream()))
                 .withSkipLines(1)
-                .build()
+                .build();
+             CSVWriter writer = new CSVWriter(new FileWriter(jobOpportunitiesResolvedCsv));
         ) {
             logger.info("Begin reading job_opportunities.csv and creating Jobs");
+
+            // the resolved jobs to be written into the output csv file
+            List<String[]> outputData = new ArrayList<>();
+            outputData.add(new String[] {"ID (primary key)", "Job Title", "Company Name", "Job URL", "Job Source" });
 
             List<Job> jobs = new ArrayList<>();
 
@@ -125,11 +134,16 @@ public class MainCommandLineRunner implements CommandLineRunner {
                     mainService.saveJobs(jobs);
                     jobs.clear();
                 }
+
+                outputData.add(new String[] {line[0], line[1], line[2], line[3], job.getJobSource() });
             }
             if (!jobs.isEmpty()) {
                 mainService.saveJobs(jobs);
                 jobs.clear();
             }
+
+            // write all the resolved jobs
+            writer.writeAll(outputData);
 
             logger.info("Done reading job_opportunities.csv and creating Jobs");
         } catch (Exception e) {
