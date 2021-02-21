@@ -106,9 +106,9 @@ public class MainCommandLineRunner implements CommandLineRunner {
 
             // read each record and convert to Job
             String[] line = null;
-            while ((line = csvReader.readNext()) != null) {
-//            for (int i = 0; i < 100; i++) {
-//                line = csvReader.readNext();
+//            while ((line = csvReader.readNext()) != null) {
+            for (int i = 0; i < 100; i++) {
+                line = csvReader.readNext();
 
                 Job job = new Job();
 
